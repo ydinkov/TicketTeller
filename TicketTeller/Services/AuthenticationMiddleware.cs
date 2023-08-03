@@ -1,11 +1,26 @@
-﻿namespace TicketTeller.Services;
+﻿using Microsoft.AspNetCore.Authorization;
 
-public class AuthMiddleware
+namespace TicketTeller.Services;
+
+public class RoleRequirement : IAuthorizeData
+{
+    public string? Policy { get; set; }
+    public string? Roles { get; set; }
+    public string? Scheme { get; set; }
+    public string? AuthenticationSchemes { get; set; }
+
+    public RoleRequirement(string role)
+    {
+        Roles = role;
+    }
+}
+
+public class AuthenticationMiddleware
 {
     private readonly RequestDelegate _next;
     private const string APIKEYNAME = "ApiKey";
 
-    public AuthMiddleware(RequestDelegate next)
+    public AuthenticationMiddleware(RequestDelegate next)
     {
         _next = next;
     }
@@ -44,5 +59,41 @@ public class AuthMiddleware
             await context.Response.WriteAsync($"Invalid Api Key provided.");
             return;
         }
+    }
+}
+
+public class AuthorizationMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public AuthorizationMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var endpoint = context.GetEndpoint();
+        if (endpoint == null)
+        {
+            await _next(context);
+            return;
+        }
+
+        var roleRequirement = endpoint.Metadata.GetMetadata<IAuthorizeData>();
+
+        var gotRole = !context.Items.TryGetValue("Role", out var role);
+        if (roleRequirement != null && gotRole)
+        {
+            context.Response.StatusCode = 401;
+            return;
+        }
+
+        if (roleRequirement != null && role?.ToString() != roleRequirement.Roles)
+        {
+            context.Response.StatusCode = 403;
+            return;
+        }
+
+        await _next(context);
     }
 }
