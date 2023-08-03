@@ -1,0 +1,28 @@
+﻿version: '3.8'
+services:
+  ticketteller:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings:YourDbConnection=Server=db;Port=5432;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};
+      - Admin_API_KEY=${ADMIN_API_KEY}
+      - Contributor_API_KEY=${CONTRIBUTOR_API_KEY}
+      - User_API_KEY=${USER_API_KEY}
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

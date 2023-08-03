@@ -4,5 +4,6 @@ public enum EDBType
 {
     sqlserver,
     postgres,
-    mysql
+    mysql,
+    sqlite
 }

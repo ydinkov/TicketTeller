@@ -3,9 +3,9 @@ using TicketTeller.Models;
 
 namespace TicketTeller;
 
-public class YourDbContext : DbContext
+public class TicketTellerDbContext : DbContext
 {
-    public YourDbContext(DbContextOptions<YourDbContext> options) : base(options)
+    public TicketTellerDbContext(DbContextOptions<TicketTellerDbContext> options) : base(options)
     {
     }
 
@@ -16,7 +16,11 @@ public class YourDbContext : DbContext
     {
         modelBuilder.Entity<Subscription>()
             .HasMany(s => s.TicketTokens)
-            .WithOne(t => t.Subscription)
-            .HasForeignKey(t => t.SubscriptionId);
+                .WithOne(t => t.Subscription)
+                    .HasForeignKey(t => t.SubscriptionId);
+
+        modelBuilder.Entity<Subscription>().HasKey(x => x.Id);
+        
+        modelBuilder.Entity<TicketToken>().HasKey(x => x.Id);
     }
 }
