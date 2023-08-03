@@ -3,7 +3,7 @@
 
 ## Overview
 
-This service is a .NET minimal API built to manage credit-pased subscriptions with overage.
+This service is a .NET minimal API built to manage credit-based subscriptions with overage.
 The service provides endpoints to create, read, update, and delete subscriptions, as well as use and refresh credit tokens for a subscription.
 The service also provides a report of a subscription showing the number of exhausted, expired but not exhausted and overage tokens for that subscription.
 
