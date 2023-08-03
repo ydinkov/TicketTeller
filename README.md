@@ -1,4 +1,5 @@
 ﻿# TicketTeller
+<img src="Logo.png" width="200">
 
 ## Overview
 
